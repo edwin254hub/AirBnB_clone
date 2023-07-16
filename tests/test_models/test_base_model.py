@@ -1,86 +1,96 @@
 #!/usr/bin/python3
-
 """
-    Defines a class TestBaseModel.
+test_base_model module
 """
-
-
+from unittest import TestCase
+from uuid import uuid4
+from datetime import datetime
+from time import sleep
+import pycodestyle
 from models.base_model import BaseModel
-import unittest
-import models
-import os
 
 
-class TestBaseModel(unittest.TestCase):
-    """Represent a TestBaseModel."""
+class TestBaseModel(TestCase):
+    """
+    Test cases for the BaseModel class
+    """
 
-    def setUp(self):
-        """SetUp method"""
+    def test_pep(self):
+        """test pep"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(['models/base_model.py',
+                                    'tests/test_models/test_base_model.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        self.base_model = BaseModel()
-        self.base_model.data = "Test data"
+    def test_module_doc(self):
+        """test module documentation"""
+        doc = __import__("models.base_model").__doc__
+        self.assertGreater(len(doc), 1)
 
-    def TearDown(self):
-        """TearDown method."""
+    def test_class_doc(self):
+        """test class documentation"""
+        doc = BaseModel.__doc__
+        self.assertGreater(len(doc), 1)
 
-        del self.base_model
+    def test_init_doc(self):
+        """test init method documentation"""
+        doc = BaseModel.__init__.__doc__
+        self.assertGreater(len(doc), 1)
 
-    def test_init_id(self):
-        """Test different id per object created"""
+    def test_str_doc(self):
+        """test str functiom documentation"""
+        doc = BaseModel.__str__.__doc__
+        self.assertGreater(len(doc), 1)
 
-        bm1 = BaseModel()
-        self.assertNotEqual(bm1.id, self.base_model.id)
+    def test_save_doc(self):
+        """test save method documentation"""
+        doc = BaseModel.save.__doc__
+        self.assertGreater(len(doc), 1)
 
-    def test_copy_object(self):
-        """Copy an object with the kwargs init from BaseModel"""
+    def test_to_dict_doc(self):
+        """test to_dict method documentation"""
+        doc = BaseModel.to_dict.__doc__
+        self.assertGreater(len(doc), 1)
 
-        my_model_dict = self.base_model.to_dict()
-        bm1 = BaseModel(**my_model_dict)
-        self.assertEqual(bm1.id, self.base_model.id)
+    def test_init(self):
+        """test init method"""
+        obj = BaseModel()
 
-    def test_id_type(self):
-        """Test the id type from BaseModel"""
+        self.assertIsInstance(obj, BaseModel)
+        self.assertIsInstance(obj.id, str)
+        self.assertIsInstance(obj.updated_at, datetime)
+        self.assertIsInstance(obj.created_at, datetime)
 
-        self.assertIsInstance(self.base_model.id, str)
+    def test_save(self):
+        """test save method"""
+        obj = BaseModel()
+        sleep(1)
 
-    def test_docstring(self):
-        """Test docstring for the module and the class"""
+        now = datetime.now().replace(microsecond=0)
+        obj.save()
+        self.assertEqual(obj.updated_at.replace(microsecond=0), now)
 
-        self.assertIsNotNone(
-            models.base_model.__doc__,
-            "No docstring in the module"
-        )
-        self.assertIsNotNone(BaseModel.__doc__, "No docstring in the class")
+    def test_to_dict(self):
+        """test to_dict method"""
+        obj = BaseModel()
+        obj.name = "Holberton"
+        obj.my_number = 89
 
-    def test_permissions_file(self):
-        """Test File base_model.py permissions"""
+        output = obj.to_dict()
 
-        test_file = os.access("models/base_model.py", os.R_OK)
-        self.assertTrue(test_file, "Read permissions")
-        test_file = os.access("models/base_model.py", os.W_OK)
-        self.assertTrue(test_file, "Write Permissions")
-        test_file = os.access("models/base_model.py", os.X_OK)
-        self.assertTrue(test_file, "Execute permissions")
+        self.assertIsInstance(output, dict)
 
-    def test_mod_to_dict(self):
-        """Test dictionary representation in BaseModel"""
+        o_id = output['id']
+        updated_at = output['updated_at']
+        created_at = output['created_at']
+        class_name = output['__class__']
+        name = output['name']
+        my_number = output['my_number']
 
-        self.assertIsInstance(self.base_model.to_dict(), dict)
-
-    def test_type_object(self):
-        """Test type object of BaseModel"""
-
-        self.assertEqual(
-            str(type(self.base_model)),
-            "<class 'models.base_model.BaseModel'>")
-        self.assertIsInstance(self.base_model, BaseModel)
-
-    def test_str_representation(self):
-        """Test str representation of BaseModel"""
-
-        str_rep = "[{:s}] ({:s}) {:s}".format(
-            self.base_model.__class__.__name__,
-            self.base_model.id,
-            str(self.base_model.__dict__)
-        )
-        self.assertEqual(str_rep, str(self.base_model))
+        self.assertIsInstance(o_id, str)
+        self.assertIsInstance(updated_at, str)
+        self.assertIsInstance(created_at, str)
+        self.assertIsInstance(class_name, str)
+        self.assertIsInstance(name, str)
+        self.assertIsInstance(my_number, int)
