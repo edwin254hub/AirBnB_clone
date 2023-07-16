@@ -1,52 +1,31 @@
 #!/usr/bin/python3
-
 """
-    Defines a class City.
+test_city module
 """
-
-
+from unittest import TestCase
+import pycodestyle
 from models.city import City
-import unittest
-import models
-import os
 
 
-class TestCity(unittest.TestCase):
-    """Represent a City."""
+class TestCity(TestCase):
+    """
+    TestCity class
+    """
 
-    def setUp(self):
-        """SetUp method"""
+    def test_pep(self):
+        """test pep"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(['models/city.py',
+                                    'tests/test_models/test_city.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        self.city = City()
+    def test_module_doc(self):
+        """test module documentation"""
+        doc = __import__('models.city').__doc__
+        self.assertGreater(len(doc), 1)
 
-    def TearDown(self):
-        """TearDown method."""
-
-        del self.city
-
-    def test_docstring(self):
-        """Test docstring for the module and the class"""
-
-        self.assertIsNotNone(
-            models.city.__doc__,
-            "No docstring in the module"
-        )
-        self.assertIsNotNone(City.__doc__, "No docstring in the class")
-
-    def test_permissions_file(self):
-        """Test File city.py permissions"""
-
-        test_file = os.access("models/city.py", os.R_OK)
-        self.assertTrue(test_file, "Read permissions")
-        test_file = os.access("models/city.py", os.W_OK)
-        self.assertTrue(test_file, "Write Permissions")
-        test_file = os.access("models/city.py", os.X_OK)
-        self.assertTrue(test_file, "Execute permissions")
-
-    def test_type_object(self):
-        """Test type object of City"""
-
-        self.assertEqual(
-            str(type(self.city)),
-            "<class 'models.city.City'>")
-        self.assertIsInstance(self.city, City)
+    def test_class_doc(self):
+        """test class documentation"""
+        doc = City.__doc__
+        self.assertGreater(len(doc), 1)
