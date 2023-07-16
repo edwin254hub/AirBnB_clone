@@ -1,52 +1,31 @@
 #!/usr/bin/python3
-
 """
-    Defines a class Amenity.
+test_amenity module
 """
-
-
+from unittest import TestCase
+import pycodestyle
 from models.amenity import Amenity
-import unittest
-import models
-import os
 
 
-class TestAmenity(unittest.TestCase):
-    """Represent a Amenity."""
+class TestAmenity(TestCase):
+    """
+    TestAmenity class
+    """
 
-    def setUp(self):
-        """SetUp method"""
+    def test_pep(self):
+        """test pep"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(['models/amenity.py',
+                                    'tests/test_models/test_amenity.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        self.amenity = Amenity()
+    def test_module_doc(self):
+        """test module documentation"""
+        doc = __import__('models.amenity').__doc__
+        self.assertGreater(len(doc), 1)
 
-    def TearDown(self):
-        """TearDown method."""
-
-        del self.amenity
-
-    def test_docstring(self):
-        """Test docstring for the module and the class"""
-
-        self.assertIsNotNone(
-            models.amenity.__doc__,
-            "No docstring in the module"
-        )
-        self.assertIsNotNone(Amenity.__doc__, "No docstring in the class")
-
-    def test_permissions_file(self):
-        """Test File amenity.py permissions"""
-
-        test_file = os.access("models/amenity.py", os.R_OK)
-        self.assertTrue(test_file, "Read permissions")
-        test_file = os.access("models/amenity.py", os.W_OK)
-        self.assertTrue(test_file, "Write Permissions")
-        test_file = os.access("models/amenity.py", os.X_OK)
-        self.assertTrue(test_file, "Execute permissions")
-
-    def test_type_object(self):
-        """Test type object of Amenity"""
-
-        self.assertEqual(
-            str(type(self.amenity)),
-            "<class 'models.amenity.Amenity'>")
-        self.assertIsInstance(self.amenity, Amenity)
+    def test_class_doc(self):
+        """test class documentation"""
+        doc = Amenity.__doc__
+        self.assertGreater(len(doc), 1)
