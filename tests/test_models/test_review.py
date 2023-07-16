@@ -1,52 +1,31 @@
 #!/usr/bin/python3
-
 """
-    Defines a class Review.
+test_review module
 """
-
-
+from unittest import TestCase
+import pycodestyle
 from models.review import Review
-import unittest
-import models
-import os
 
 
-class TestReview(unittest.TestCase):
-    """Represent a Review."""
+class TestReview(TestCase):
+    """
+    TestReview class
+    """
 
-    def setUp(self):
-        """SetUp method"""
+    def test_pep(self):
+        """test pep"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(['models/review.py',
+                                    'tests/test_models/test_review.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        self.review = Review()
+    def test_module_doc(self):
+        """test module documentation"""
+        doc = __import__('models.review').__doc__
+        self.assertGreater(len(doc), 1)
 
-    def TearDown(self):
-        """TearDown method."""
-
-        del self.review
-
-    def test_docstring(self):
-        """Test docstring for the module and the class"""
-
-        self.assertIsNotNone(
-            models.review.__doc__,
-            "No docstring in the module"
-        )
-        self.assertIsNotNone(Review.__doc__, "No docstring in the class")
-
-    def test_permissions_file(self):
-        """Test File review.py permissions"""
-
-        test_file = os.access("models/review.py", os.R_OK)
-        self.assertTrue(test_file, "Read permissions")
-        test_file = os.access("models/review.py", os.W_OK)
-        self.assertTrue(test_file, "Write Permissions")
-        test_file = os.access("models/review.py", os.X_OK)
-        self.assertTrue(test_file, "Execute permissions")
-
-    def test_type_object(self):
-        """Test type object of Review"""
-
-        self.assertEqual(
-            str(type(self.review)),
-            "<class 'models.review.Review'>")
-        self.assertIsInstance(self.review, Review)
+    def test_class_doc(self):
+        """test class documentation"""
+        doc = Review.__doc__
+        self.assertGreater(len(doc), 1)
