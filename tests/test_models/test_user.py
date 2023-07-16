@@ -1,52 +1,31 @@
 #!/usr/bin/python3
-
 """
-    Defines a class TestUser.
+test_user module
 """
-
-
+from unittest import TestCase
+import pycodestyle
 from models.user import User
-import unittest
-import models
-import os
 
 
-class TestUser(unittest.TestCase):
-    """Represent a User."""
+class TestUser(TestCase):
+    """
+    TestUser class
+    """
 
-    def setUp(self):
-        """SetUp method"""
+    def test_pep(self):
+        """test pep"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(['models/user.py',
+                                    'tests/test_models/test_user.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-        self.user = User()
+    def test_module_doc(self):
+        """test module documentation"""
+        doc = __import__('models.user').__doc__
+        self.assertGreater(len(doc), 1)
 
-    def TearDown(self):
-        """TearDown method."""
-
-        del self.user
-
-    def test_docstring(self):
-        """Test docstring for the module and the class"""
-
-        self.assertIsNotNone(
-            models.user.__doc__,
-            "No docstring in the module"
-        )
-        self.assertIsNotNone(User.__doc__, "No docstring in the class")
-
-    def test_permissions_file(self):
-        """Test File user.py permissions"""
-
-        test_file = os.access("models/user.py", os.R_OK)
-        self.assertTrue(test_file, "Read permissions")
-        test_file = os.access("models/user.py", os.W_OK)
-        self.assertTrue(test_file, "Write Permissions")
-        test_file = os.access("models/user.py", os.X_OK)
-        self.assertTrue(test_file, "Execute permissions")
-
-    def test_type_object(self):
-        """Test type object of User"""
-
-        self.assertEqual(
-            str(type(self.user)),
-            "<class 'models.user.User'>")
-        self.assertIsInstance(self.user, User)
+    def test_class_doc(self):
+        """test class documentation"""
+        doc = User.__doc__
+        self.assertGreater(len(doc), 1)
